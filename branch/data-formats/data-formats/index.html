@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data formats with Pandas and Numpy &mdash; Python for Scientific Computing  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/togglebutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/mystnb.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_lesson.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_rtd_theme_ext_color_contrast.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/tabs.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/logo-hexagons-02-compact.svg.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/togglebutton.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script src="../_static/minipres.js"></script>
+        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex/" />
+    <link rel="search" title="Search" href="../search/" />
+    <link rel="next" title="Scripts" href="../scripts/" />
+    <link rel="prev" title="Data visualization with Matplotlib" href="../data-visualization/" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../" class="icon icon-home"> Python for Scientific Computing
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">The lesson</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../python/">Introduction to Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../jupyter/">Jupyter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../numpy/">NumPy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pandas/">Pandas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data-visualization/">Data visualization with Matplotlib</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Data formats with Pandas and Numpy</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#what-is-a-data-format">What is a data format?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quick-overview-of-different-file-formats">Quick overview of different file formats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-different-file-formats">Using different file formats</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#csv-text">CSV (text)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#feather-binary">Feather (binary)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#parquet-binary">Parquet (binary)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hdf5-binary">HDF5 (binary)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#netcdf4-binary">NetCDF4 (binary)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#npy-binary">npy (binary)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#why-would-i-need-to-use-a-binary-format">Why would I need to use a binary format?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#things-to-remember">Things to remember</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exercise-1">Exercise 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exercise-2">Exercise 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#other-file-formats">Other file formats</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pickle-binary">Pickle (binary)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#json-text">JSON (text)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#excel-binary">Excel (binary)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#see-also">See also</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../scripts/">Scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../scipy/">SciPy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../libraries/">Library ecosystem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../parallel/">Parallel programming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dependencies/">Dependency management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../binder/">Binder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../packaging/">Packaging</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation/">Software installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quick-reference/">Quick reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/">Instructor’s guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../">Python for Scientific Computing</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../" class="icon icon-home"></a> &raquo;</li>
+      <li>Data formats with Pandas and Numpy</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/AaltoSciComp/python-for-scicomp/blob/master/content/data-formats.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="data-formats-with-pandas-and-numpy">
+<h1>Data formats with Pandas and Numpy<a class="headerlink" href="#data-formats-with-pandas-and-numpy" title="Permalink to this headline"></a></h1>
+<div class="admonition-questions questions admonition">
+<p class="admonition-title">Questions</p>
+<ul class="simple">
+<li><p>How do you store your data right now?</p></li>
+<li><p>How much time do you think is spent doing your calculation vs
+reading/writing your data?</p></li>
+</ul>
+</div>
+<div class="admonition-objectives objectives admonition">
+<p class="admonition-title">Objectives</p>
+<ul class="simple">
+<li><p>Learn the distinguishing characteristics of different data formats</p></li>
+<li><p>Learn how Pandas to read and write data in a variety of formats</p></li>
+</ul>
+</div>
+<div class="section" id="what-is-a-data-format">
+<h2>What is a data format?<a class="headerlink" href="#what-is-a-data-format" title="Permalink to this headline"></a></h2>
+<p>Whenever you have data (e.g. measurement data, simulation results, analysis results), you’ll need a way to store it.
+This applies both when</p>
+<ol class="arabic simple">
+<li><p>you’re storing the data in memory while you’re working on it</p></li>
+<li><p>you’re storing it to a disk for later work</p></li>
+</ol>
+<p>Let’s consider the following Pandas DataFrame with various different columns:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">n_rows</span> <span class="o">=</span> <span class="mi">100000</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">&#39;string&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">((</span><span class="s1">&#39;apple&#39;</span><span class="p">,</span> <span class="s1">&#39;banana&#39;</span><span class="p">,</span> <span class="s1">&#39;carrot&#39;</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="n">n_rows</span><span class="p">),</span>
+        <span class="s1">&#39;timestamp&#39;</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="s2">&quot;20130101&quot;</span><span class="p">,</span> <span class="n">periods</span><span class="o">=</span><span class="n">n_rows</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">),</span>
+        <span class="s1">&#39;integer&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="n">n_rows</span><span class="p">),</span>
+        <span class="s1">&#39;float&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">n_rows</span><span class="p">),</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>This DataFrame already has a data format: it is in the tidy data format!
+In tidy data format we have multiple columns of data that are collected in a Pandas DataFrame.</p>
+<p>Let’s consider another example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="mi">1000</span>
+
+<span class="n">data_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">))</span>
+<span class="n">data_array</span>
+</pre></div>
+</div>
+<p>Here we have a different data format: we have a two-dimentional array of numbers.
+This is different to Pandas DataFrame as data is stored as one contiguous block instead of individual columns.
+This also means that the whole array must have one specified data type.</p>
+<p>Now the question is: can we store these datasets in a file in a way that <strong>keeps our data format intact</strong>?</p>
+<p>For this we need a <strong>file format</strong> that supports our chosen <strong>data format</strong>.</p>
+<p>Fortunately Pandas has support for many data formats for tidy data.
+More info on is provided in the excellent <a class="reference external" href="https://pandas.pydata.org/docs/user_guide/io.html">Pandas’ IO tools-page</a> .</p>
+<p>Let’s go through some of the most popular file formats and how to use them.</p>
+</div>
+<div class="section" id="quick-overview-of-different-file-formats">
+<h2>Quick overview of different file formats<a class="headerlink" href="#quick-overview-of-different-file-formats" title="Permalink to this headline"></a></h2>
+<p>All file formats can be split into two types:</p>
+<ol class="arabic simple">
+<li><p>Text-based formats, that store the data as human-readable text.</p></li>
+<li><p>Binary-based formats, that store the data as machine-readable binary.</p></li>
+</ol>
+<p>We’ll check the difference between text-based and binary-based formats after we introduce the formats.</p>
+<p>Another way of thinking about file formats is to consider the usability (speed, data size) with certain use cases:</p>
+<ol class="arabic simple">
+<li><p>Formats that are meant for storing tidy data aka. columnar data. In this data format the data is organized as columns with multiple rows (for example, Pandas DataFrames).</p></li>
+<li><p>Formats that are meant for storing numeric arrays of (possibly) multiple dimensions. In this data format the data is organized as arrays of numbers (for example, multidimensional Numpy arrays).</p></li>
+</ol>
+<p>Third way of thinking about file format is its longevity:</p>
+<ol class="arabic simple">
+<li><p>Formats that are easy to share or archive.</p></li>
+<li><p>Formats that are meant for temporary storage of the data.</p></li>
+</ol>
+<p>Here’s a list of common data formats and use cases:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 18%" />
+<col style="width: 26%" />
+<col style="width: 27%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>File format</p></th>
+<th class="head"><p>Format type</p></th>
+<th class="head"><p>Usability (tidy data)</p></th>
+<th class="head"><p>Usability (array data)</p></th>
+<th class="head"><p>Longevity</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CSV</p></td>
+<td><p>text</p></td>
+<td><p>bad</p></td>
+<td><p>bad</p></td>
+<td><p>Good</p></td>
+</tr>
+<tr class="row-odd"><td><p>Feather</p></td>
+<td><p>binary</p></td>
+<td><p>great</p></td>
+<td><p>bad</p></td>
+<td><p>Bad</p></td>
+</tr>
+<tr class="row-even"><td><p>Parquet</p></td>
+<td><p>binary</p></td>
+<td><p>great</p></td>
+<td><p>it’s complicated</p></td>
+<td><p>Good</p></td>
+</tr>
+<tr class="row-odd"><td><p>HDF5</p></td>
+<td><p>binary</p></td>
+<td><p>good with numbers</p></td>
+<td><p>good</p></td>
+<td><p>Ok</p></td>
+</tr>
+<tr class="row-even"><td><p>NetCDF4</p></td>
+<td><p>binary</p></td>
+<td><p>good with numbers</p></td>
+<td><p>good</p></td>
+<td><p>Good</p></td>
+</tr>
+<tr class="row-odd"><td><p>npy</p></td>
+<td><p>binary</p></td>
+<td><p>really bad</p></td>
+<td><p>good</p></td>
+<td><p>Bad</p></td>
+</tr>
+<tr class="row-even"><td><p>pickle</p></td>
+<td><p>binary</p></td>
+<td><p>ok</p></td>
+<td><p>ok</p></td>
+<td><p>Really bad</p></td>
+</tr>
+<tr class="row-odd"><td><p>json</p></td>
+<td><p>text</p></td>
+<td><p>bad</p></td>
+<td><p>bad</p></td>
+<td><p>Good</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 12%" />
+<col style="width: 14%" />
+<col style="width: 64%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>File format</p></th>
+<th class="head"><p>Format type</p></th>
+<th class="head"><p>Packages needed</p></th>
+<th class="head"><p>Best use cases</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CSV</p></td>
+<td><p>text</p></td>
+<td><p>pandas</p></td>
+<td><p>Sharable data. Small data. Human readable debug data.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Feather</p></td>
+<td><p>binary</p></td>
+<td><p>pyarrow</p></td>
+<td><p>Temporary storage for tabular data while you’re working on the data.</p></td>
+</tr>
+<tr class="row-even"><td><p>Parquet</p></td>
+<td><p>binary</p></td>
+<td><p>pyarrow</p></td>
+<td><p>Storage for large-scale tabular data. Multidimensional arrays need to be flattened.</p></td>
+</tr>
+<tr class="row-odd"><td><p>HDF5</p></td>
+<td><p>binary</p></td>
+<td><p>PyTables, h5py</p></td>
+<td><p>Storage of large scale numeric data.</p></td>
+</tr>
+<tr class="row-even"><td><p>NetCDF4</p></td>
+<td><p>binary</p></td>
+<td><p>netCDF4, xarray</p></td>
+<td><p>Storage and archival of large scale numeric data.</p></td>
+</tr>
+<tr class="row-odd"><td><p>npy</p></td>
+<td><p>binary</p></td>
+<td><p>numpy</p></td>
+<td><p>Temporary storage of Numpy arrays while you’re working on the data.</p></td>
+</tr>
+<tr class="row-even"><td><p>pickle</p></td>
+<td><p>binary</p></td>
+<td><p>none</p></td>
+<td><p>Temporary storage of Python objects for debugging.</p></td>
+</tr>
+<tr class="row-odd"><td><p>json</p></td>
+<td><p>text</p></td>
+<td><p>none</p></td>
+<td><p>Sharable data. Especially data from internet services. Dictionary data.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Typically, you’ll want to choose a file format that is suitable for your data format and your specific needs.
+It is important to note, that if you’re using a previously existing framework or tools or you work in a specific field, you should prioritize using the formats that are used in said framework/tools/field.</p>
+</div>
+<div class="section" id="using-different-file-formats">
+<h2>Using different file formats<a class="headerlink" href="#using-different-file-formats" title="Permalink to this headline"></a></h2>
+<div class="section" id="csv-text">
+<h3>CSV (text)<a class="headerlink" href="#csv-text" title="Permalink to this headline"></a></h3>
+<p>CSV is by far the most popular data format, as it is human-readable and easily shareable.
+However, it is not the best format to use when you’re working with big data.</p>
+<p>Pandas has a very nice interface for writing CSV files.
+Let’s write our dataset into a CSV file using the <a class="reference external" href="https://pandas.pydata.org/docs/user_guide/io.html#io-store-in-csv">to_csv-function</a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;dataset.csv&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will create a <code class="docutils literal notranslate"><span class="pre">dataset.csv</span></code>-file.
+We can load the new CSV-file using Pandas’ <a class="reference external" href="https://pandas.pydata.org/docs/user_guide/io.html#io-read-csv-table">read_csv-function</a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataset_csv</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;dataset.csv&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Numpy has <a class="reference external" href="https://numpy.org/doc/stable/reference/routines.io.html#text-files">routines</a> for saving and loading CSV files as arrays as well</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="s1">&#39;data_array.csv&#39;</span><span class="p">,</span> <span class="n">data_array</span><span class="p">)</span>
+
+<span class="n">data_array_csv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s1">&#39;data_array.csv&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="feather-binary">
+<h3>Feather (binary)<a class="headerlink" href="#feather-binary" title="Permalink to this headline"></a></h3>
+<p><a class="reference external" href="https://arrow.apache.org/docs/python/feather.html">Feather</a> is a file format for storing data frames quickly in a language agnostic way (there are libraries for Python, R and Julia).</p>
+<p>Again, we can work with Feather files with <a class="reference external" href="https://pandas.pydata.org/docs/user_guide/io.html#io-feather">to_feather- and read_feather-functions</a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">to_feather</span><span class="p">(</span><span class="s1">&#39;dataset.feather&#39;</span><span class="p">)</span>
+<span class="n">dataset_feather</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_feather</span><span class="p">(</span><span class="s1">&#39;dataset.feather&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Using Feather requires <a class="reference external" href="https://arrow.apache.org/docs/python">pyarrow-package</a> to be installed.</p>
+</div>
+<div class="section" id="parquet-binary">
+<h3>Parquet (binary)<a class="headerlink" href="#parquet-binary" title="Permalink to this headline"></a></h3>
+<p><a class="reference external" href="https://arrow.apache.org/docs/python/parquet.html">Parquet</a> is a standardized open-source columnar storage format that is commonly used for storing big data in machine learning.</p>
+<p>Again, we can work with Parquet files with <a class="reference external" href="https://pandas.pydata.org/docs/user_guide/io.html#io-parquet">to_parquet-and read_parquet-functions</a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="s1">&#39;dataset.parquet&#39;</span><span class="p">)</span>
+<span class="n">dataset_parquet</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="s1">&#39;dataset.parquet&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Like Feather, using Parquet requires <a class="reference external" href="https://arrow.apache.org/docs/python/">pyarrow-package</a> to be installed.</p>
+</div>
+<div class="section" id="hdf5-binary">
+<h3>HDF5 (binary)<a class="headerlink" href="#hdf5-binary" title="Permalink to this headline"></a></h3>
+<p>HDF5 (Hierarchical Data Format) is a high performance storage format for storing large amounts of data in multiple datasets in a single file.
+It is especially popular in fields where you need to store big multidimensional arrays such as physical sciences.</p>
+<p>Pandas allows you to store tables as HDF5 with <a class="reference external" href="https://www.pytables.org/">PyTables</a>, which uses HDF5 to write the files.
+You can create a HDF5 file with <a class="reference external" href="https://pandas.pydata.org/docs/user_guide/io.html#io-hdf5">to_hdf- and `read_parquet-functions</a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">to_hdf</span><span class="p">(</span><span class="s1">&#39;dataset.h5&#39;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;dataset&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+<span class="n">dataset_hdf5</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="s1">&#39;dataset.h5&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>PyTables comes installed with the default Anaconda installation.</p>
+<p>For writing data that is not a table, you can use the excellent <a class="reference external" href="https://docs.h5py.org/en/stable/">h5py-package</a>. It comes with Anaconda as well.</p>
+</div>
+<div class="section" id="netcdf4-binary">
+<h3>NetCDF4 (binary)<a class="headerlink" href="#netcdf4-binary" title="Permalink to this headline"></a></h3>
+<p>NetCDF4 (Network Common Data Form) is a data format that uses HDF5 as its file format, but it has standardized structure of datasets and metadata related to these datasets.
+This makes it possible to be read from various different programs.</p>
+<p>NetCDF4 is by far the most common format for storing large data from big simulations in physical sciences.</p>
+<p>You can use <a class="reference external" href="https://unidata.github.io/netcdf4-python">NetCDF-Python-package</a> and the excellent <a class="reference external" href="https://xarray.pydata.org/en/stable/getting-started-guide/quick-overview.html#read-write-netcdf-files">xarray-package</a> for accessing NetCDF4 files:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Write dataset as NetCDF4</span>
+<span class="n">dataset_xarray_write</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">to_xarray</span><span class="p">()</span>
+<span class="n">dataset_xarray_write</span><span class="o">.</span><span class="n">to_netcdf</span><span class="p">(</span><span class="s1">&#39;dataset.nc&#39;</span><span class="p">)</span>
+<span class="c1"># Read dataset from NetCDF4</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="n">dataset_xarray_read</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="s1">&#39;dataset.nc&#39;</span><span class="p">)</span>
+<span class="n">dataset_xarray</span> <span class="o">=</span> <span class="n">dataset_xarray_read</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="npy-binary">
+<h3>npy (binary)<a class="headerlink" href="#npy-binary" title="Permalink to this headline"></a></h3>
+<p>If you want to temporarily store numpy arrays, you can use the <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.save.html">numpy.save-function</a> to quickly store a numpy array:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;data_array.npy&#39;</span><span class="p">,</span> <span class="n">data_array</span><span class="p">)</span>
+<span class="n">data_array_npy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;data_array.npy&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For big arrays it’s good idea to check other binary formats such as HDF5 or xarray.</p>
+</div>
+</div>
+<div class="section" id="why-would-i-need-to-use-a-binary-format">
+<h2>Why would I need to use a binary format?<a class="headerlink" href="#why-would-i-need-to-use-a-binary-format" title="Permalink to this headline"></a></h2>
+<p>Binary files come with various benefits compared to text files.</p>
+<ol class="arabic">
+<li><p>They can represent floating point numbers with full precision.
+By storing a floating point number in a CSV-file, you usually reduce the precision from double precision (<span class="math notranslate nohighlight">\(\epsilon \approx (10^{-16})\)</span>) to the number of digits you have specified.
+For example, try:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">dataset_csv</span><span class="p">)</span>
+
+<span class="n">dataset</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">dataset_hdf5</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p>Storing data in binary format can potentially save lots of space.
+This is because you do not need to write numbers as characters.
+Additionally some file formats support compression of the data.</p></li>
+<li><p>Data loading from binary files is usually much faster than loading from text files.
+This is because memory can be allocated for the data before data is loaded as the type of data in columns is known.</p></li>
+<li><p>You can often store multiple datasets and metadata to the same file.</p></li>
+<li><p>Many binary formats allow for partial loading of the data.
+This makes it possible to work with datasets that are larger than your computer’s memory.</p></li>
+</ol>
+<p>For the tidy <code class="docutils literal notranslate"><span class="pre">dataset</span></code> we had, we can test the performance of the different file formats:</p>
+<p><strong>Performance when writing tidy dataset:</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 19%" />
+<col style="width: 20%" />
+<col style="width: 19%" />
+<col style="width: 26%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>File format</p></th>
+<th class="head"><p>File size [MB]</p></th>
+<th class="head"><p>Write time [ms]</p></th>
+<th class="head"><p>Read time [ms]</p></th>
+<th class="head"><p>Data matches exactly</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CSV</p></td>
+<td><p>4.571571</p></td>
+<td><p>0.355826</p></td>
+<td><p>0.355826</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p>Feather</p></td>
+<td><p>2.202845</p></td>
+<td><p>0.014178</p></td>
+<td><p>0.014178</p></td>
+<td><p>True</p></td>
+</tr>
+<tr class="row-even"><td><p>Parquet</p></td>
+<td><p>1.820971</p></td>
+<td><p>0.043103</p></td>
+<td><p>0.043103</p></td>
+<td><p>True</p></td>
+</tr>
+<tr class="row-odd"><td><p>HDF5</p></td>
+<td><p>4.892296</p></td>
+<td><p>0.050013</p></td>
+<td><p>0.050013</p></td>
+<td><p>True</p></td>
+</tr>
+<tr class="row-even"><td><p>NetCDF4</p></td>
+<td><p>8.396764</p></td>
+<td><p>0.124124</p></td>
+<td><p>0.124124</p></td>
+<td><p>True</p></td>
+</tr>
+</tbody>
+</table>
+<p>The relatively poor performance of HDF5 based formats in this case is due to the data being mostly one dimensional columns full of character strings.
+For writing the floating point array <cite>data_array</cite>, the performance is be much better.</p>
+<p><strong>Performance when writing data array:</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 19%" />
+<col style="width: 20%" />
+<col style="width: 19%" />
+<col style="width: 26%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>File format</p></th>
+<th class="head"><p>File size [MB]</p></th>
+<th class="head"><p>Write time [ms]</p></th>
+<th class="head"><p>Read time [ms]</p></th>
+<th class="head"><p>Data matches exactly</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CSV</p></td>
+<td><p>23.841858</p></td>
+<td><p>0.919903</p></td>
+<td><p>0.870455</p></td>
+<td><p>True</p></td>
+</tr>
+<tr class="row-odd"><td><p>npy</p></td>
+<td><p>7.629517</p></td>
+<td><p>0.013368</p></td>
+<td><p>0.002773</p></td>
+<td><p>True</p></td>
+</tr>
+<tr class="row-even"><td><p>NetCDF4</p></td>
+<td><p>7.637207</p></td>
+<td><p>0.016921</p></td>
+<td><p>0.007093</p></td>
+<td><p>True</p></td>
+</tr>
+</tbody>
+</table>
+<p>For this kind of a data, HDF5 formats are much better.</p>
+</div>
+<div class="section" id="things-to-remember">
+<h2>Things to remember<a class="headerlink" href="#things-to-remember" title="Permalink to this headline"></a></h2>
+<ol class="arabic simple">
+<li><p>Usually, your research question determines which libraries you want to use to solve it.
+Similarly, the data format you have chosen determines file format you want to use.</p></li>
+<li><p>However, if you’re using a previously existing framework or tools or you work in a specific field, you should prioritize using the formats that are used in said framework/tools/field.</p></li>
+<li><p>When you’re starting your project, it’s a good idea to take your initial data, clean it, and store the results in a good binary format that works as a starting point for your future analysis.
+If you’ve written the cleaning procedure as a script, you can always reproduce it.</p></li>
+<li><p>Throughout your work, you should use code to turn important data to human-readable format (e.g. plots, averages, <code class="docutils literal notranslate"><span class="pre">DataFrame.head()</span></code>), not to keep your full data in a human-readable format.</p></li>
+<li><p>Once you’ve finished, you should store the data in a format that can be easily shared to other people.</p></li>
+</ol>
+</div>
+<div class="section" id="exercise-1">
+<h2>Exercise 1<a class="headerlink" href="#exercise-1" title="Permalink to this headline"></a></h2>
+<div class="admonition-exercise exercise important admonition">
+<p class="admonition-title">Exercise</p>
+<ul class="simple">
+<li><p>Create a dataframe. Store it as a CSV.</p></li>
+<li><p>Read the dataframe back in and compare it to the original one. Does the data match?</p></li>
+<li><p>Store the dataframe in a binary format (for example, PyTables).</p></li>
+<li><p>Read the dataframe back in and compare it to the original one. Does the data match?</p></li>
+</ul>
+</div>
+<div class="admonition-solution solution important dropdown admonition">
+<p class="admonition-title">Solution</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span> <span class="s1">&#39;my_data&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">3.1415</span><span class="p">,</span> <span class="mf">2.718</span><span class="p">,</span> <span class="mf">1.6180</span><span class="p">]})</span>
+
+<span class="n">data</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;data.csv&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">data_from_csv</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;data.csv&#39;</span><span class="p">)</span>
+<span class="n">data</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">data_from_csv</span><span class="p">)</span>
+
+<span class="n">data</span><span class="o">.</span><span class="n">to_hdf</span><span class="p">(</span><span class="s1">&#39;data.h5&#39;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s1">&#39;dataset&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+
+<span class="n">data_from_hdf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="s1">&#39;data.h5&#39;</span><span class="p">)</span>
+<span class="n">data</span><span class="o">.</span><span class="n">compare</span><span class="p">(</span><span class="n">data_from_hdf</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="exercise-2">
+<h2>Exercise 2<a class="headerlink" href="#exercise-2" title="Permalink to this headline"></a></h2>
+<div class="admonition-exercise exercise important admonition">
+<p class="admonition-title">Exercise</p>
+<ul class="simple">
+<li><p>Create a numpy array. Store it as a npy.</p></li>
+<li><p>Read the dataframe back in and compare it to the original one. Does the data match?</p></li>
+</ul>
+</div>
+<div class="admonition-solution solution important dropdown admonition">
+<p class="admonition-title">Solution</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">my_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;my_array.npy&#39;</span><span class="p">,</span> <span class="n">my_array</span><span class="p">)</span>
+<span class="n">my_array_npy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;my_array.npy&#39;</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">my_array</span> <span class="o">==</span> <span class="n">my_array_npy</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="other-file-formats">
+<h2>Other file formats<a class="headerlink" href="#other-file-formats" title="Permalink to this headline"></a></h2>
+<div class="section" id="pickle-binary">
+<h3>Pickle (binary)<a class="headerlink" href="#pickle-binary" title="Permalink to this headline"></a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Loading pickles that have been provided from untrusted sources is
+risky as they can contain arbitrary executable code.</p>
+</div>
+<p><a class="reference external" href="https://docs.python.org/3/library/pickle.html">Pickle</a> is Python’s own serialization library.
+It allows you to store Python objects into a binary file.
+It is not a format you will want to use in the long term.
+It is best suited for debugging your code by saving the Python variables for later inspection:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pickle</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;data_array.pickle&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data_array</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;data_array.pickle&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">data_array_pickle</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="json-text">
+<h3>JSON (text)<a class="headerlink" href="#json-text" title="Permalink to this headline"></a></h3>
+<p>JSON is another popular human-readable data format.
+It is especially common when dealing with web applications (REST-APIs etc.).
+However, when you’re working with big data, you rarely want to keep your data in this format.</p>
+<p>Similarly to other popular files, Pandas can write and read json files with <a class="reference external" href="https://pandas.pydata.org/docs/user_guide/io.html#io-json-writer">to_json-</a> and <a class="reference external" href="https://pandas.pydata.org/docs/user_guide/io.html#io-json-reader">read_json</a>-functions:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="s1">&#39;dataset.json&#39;</span><span class="p">)</span>
+<span class="n">dataset_json</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;dataset.json&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>However, JSON is often used to represent hierarchical data with multiple layers or multiple connections.
+For such data you might need to do a lot more processing.</p>
+</div>
+<div class="section" id="excel-binary">
+<h3>Excel (binary)<a class="headerlink" href="#excel-binary" title="Permalink to this headline"></a></h3>
+<p>Excel is very popular in social sciences and economics.
+However, it is <a class="reference external" href="https://www.bbc.com/news/technology-54423988">not a good format</a> for data science.</p>
+<p>See Pandas’ documentation on <a class="reference external" href="https://pandas.pydata.org/docs/user_guide/io.html#excel-files">working with Excel files</a>.</p>
+<p>Using Excel files with Pandas requires <a class="reference external" href="https://openpyxl.readthedocs.io/en/stable/">openpyxl-package</a> to be installed.</p>
+</div>
+</div>
+<div class="section" id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://pandas.pydata.org/docs/user_guide/io.html">Pandas’ IO tools</a> .</p></li>
+<li><p><a class="reference external" href="https://github.com/AaltoSciComp/python-for-scicomp/tree/master/extras/data-formats-comparison-tidy.ipynb">Tidy data comparison notebook</a></p></li>
+<li><p><a class="reference external" href="https://github.com/AaltoSciComp/python-for-scicomp/tree/master/extras/data-formats-comparison-array.ipynb">Array data comparison notebook</a></p></li>
+</ul>
+<div class="admonition-keypoints keypoints admonition">
+<p class="admonition-title">Keypoints</p>
+<ul class="simple">
+<li><p>Pandas can read and write a variety of data formats.</p></li>
+<li><p>There are many good, standard formats, and you don’t need to create your own.</p></li>
+<li><p>There are plenty of other libraries dedicated to various formats.</p></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../data-visualization/" class="btn btn-neutral float-left" title="Data visualization with Matplotlib" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../scripts/" class="btn btn-neutral float-right" title="Scripts" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, The contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
